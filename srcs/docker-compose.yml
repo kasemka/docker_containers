@@ -1,6 +1,30 @@
 version: "3.8"
 
 services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    depends_on:
+      - wordpress
+    restart: always
+    networks:
+      - docker-network
+    volumes:
+      - wp_files:/var/www/wordpress/
+    ports:
+      - "443:443"
+    env_file: .env
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    restart: always
+    networks:
+      - docker-network
+    volumes:
+      - wp_files:/var/www/wordpress/
+    env_file: .env
   mariadb:
     build:
       context: ./requirements/mariadb
@@ -11,38 +35,10 @@ services:
         ROOT_PASSWORD: ${ROOT_PASSWORD}
     container_name: mariadb
     restart: always
-
     networks:
       - docker-network
     volumes:
       - data:/var/lib/mysql/
-    # wordpress:
-    # 	build: ./requirements/wordpress
-    # 	container_name: wordpress
-    # 	depends_on:
-    # 		- mariadb
-    # 	restart: always
-    # 	networks:
-    # 		- docker-network
-    # 	volumes:
-    # 		- wp_files:/var/www/${DOMAIN}/
-    # 	env_file: .env
-  nginx:
-    build:
-      context: ./requirements/nginx
-      args:
-        DOMAIN: ${DOMAIN}
-    container_name: nginx
-    # depends_on:
-    #   - worpress
-    restart: always
-    networks:
-      - docker-network
-    volumes:
-      - wp_files:/var/www/${DOMAIN}/
-    ports:
-      - "443:443"
-    env_file: .env
 
 volumes:
   data:

@@ -1,24 +1,36 @@
-FROM debian:buster
 
-RUN	 apt-get update && apt-get install -y nginx openssl
+# FROM debian:buster
 
-WORKDIR /app
+# RUN apt update && apt install -y \
+# 	nginx \
+# 	openssl \
+# 	vim
 
-COPY /conf/nginx.conf /etc/nginx/sites-available/
+# COPY /conf/nginx.conf /etc/nginx/sites-available/
 
-RUN ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/nginx.conf && \
-	rm -rf /etc/nginx/sites-enabled/default
+# WORKDIR /
+# COPY ./tools/init.sh ./
+# RUN chmod 700 init.sh && chmod 700 /etc/nginx/sites-available/nginx.conf;
 
-ARG DOMAIN
-RUN	mkdir -p /etc/nginx/certs
+# EXPOSE 443
 
-RUN	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/my_private.key \
-	-out /etc/nginx/certs/crt_public.crt \
-	-subj "/C=RU/ST=TATARSTAN/L=KAZAN/O=Inception Inc/OU=IT/CN=${DOMAIN}";
-
-
-EXPOSE 443
+# CMD ["sh", "init.sh"]
 
 
-ENTRYPOINT	nginx -g "daemon off;"
-# "/C=US/ST=Utah/L=Lehi/O=Your Company, Inc./OU=IT/CN=yourdomain.com"
+# install debian core
+FROM		debian:buster
+
+#		update, upgrade and install nginx, vim
+RUN			apt-get update \
+	&& apt-get upgrade -y \
+	&& apt-get -y install nginx openssl
+
+#		copy config
+COPY		./conf/nginx.conf /etc/nginx/sites-available/nginx.conf
+COPY		./tools/init.sh /tmp/
+
+#		start script with some sh**
+RUN			sh /tmp/init.sh
+
+#		starting service
+ENTRYPOINT	/usr/sbin/nginx -g "daemon off;"
