@@ -9,8 +9,6 @@ COPY ./conf/my.cnf /etc/mysql/
 
 COPY ./tools/base.sql . 
 
-# RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal
-
 ARG			DB_NAME
 ARG			DB_USER
 ARG			DB_USER_PASSWORD
