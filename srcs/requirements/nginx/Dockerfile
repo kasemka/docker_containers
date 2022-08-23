@@ -1,36 +1,20 @@
-
-# FROM debian:buster
-
-# RUN apt update && apt install -y \
-# 	nginx \
-# 	openssl \
-# 	vim
-
-# COPY /conf/nginx.conf /etc/nginx/sites-available/
-
-# WORKDIR /
-# COPY ./tools/init.sh ./
-# RUN chmod 700 init.sh && chmod 700 /etc/nginx/sites-available/nginx.conf;
-
-# EXPOSE 443
-
-# CMD ["sh", "init.sh"]
-
-
-# install debian core
 FROM		debian:buster
 
-#		update, upgrade and install nginx, vim
-RUN			apt-get update \
-	&& apt-get upgrade -y \
-	&& apt-get -y install nginx openssl
+RUN			apt-get update 	&&  apt-get -y install nginx openssl
 
-#		copy config
 COPY		./conf/nginx.conf /etc/nginx/sites-available/nginx.conf
-COPY		./tools/init.sh /tmp/
 
-#		start script with some sh**
-RUN			sh /tmp/init.sh
+ARG 		DOMAIN
+RUN 		ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/mysite.conf &&\
+	rm -rf /etc/nginx/sites-enabled/default 
 
-#		starting service
-ENTRYPOINT	/usr/sbin/nginx -g "daemon off;"
+RUN			sed -i "s|domain|$DOMAIN|g" /etc/nginx/sites-available/nginx.conf 
+
+RUN			openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+	-keyout /etc/ssl/private/private.key -out /etc/ssl/certs/public.crt \
+	-subj "/C=RU/ST=TATARSTAN/L=KAZAN/O=21SCHOOL/OU=IT/CN=$DOMAIN" 
+
+RUN			chown -R www-data /var/www/* && chmod -R 744 /var/www/*
+
+CMD			nginx "-g" "daemon off;"
+

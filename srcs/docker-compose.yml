@@ -2,7 +2,10 @@ version: "3.8"
 
 services:
   nginx:
-    build: ./requirements/nginx
+    build:
+      context: ./requirements/nginx
+      args:
+        DOMAIN: ${DOMAIN}
     container_name: nginx
     depends_on:
       - wordpress
