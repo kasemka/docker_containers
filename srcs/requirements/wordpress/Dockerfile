@@ -4,14 +4,12 @@ RUN	 apt-get update && apt-get install -y wget php php-fpm php-mysql vim
 
 WORKDIR /app
 
+COPY ./tools/script.sh . 
 
 RUN mkdir -p /run/php &&\
 	mkdir -p /var/www/wordpress 
 
-COPY ./conf/wp-config.php  /var/www/wordpress 
-COPY ./tools/script.sh . 
-RUN chmod 744 ./script.sh && chmod 744 /var/www/wordpress/wp-config.php
-
+RUN chmod 744 ./script.sh 
 
 RUN     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&\
 	chmod +x wp-cli.phar && \

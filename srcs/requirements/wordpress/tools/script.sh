@@ -1,13 +1,14 @@
-sed -i "s|R_DB_NAME|'$DB_NAME'|g" /var/www/wordpress/wp-config.php
-sed -i "s|R_DB_USER|'$DB_USER'|g" /var/www/wordpress/wp-config.php
-sed -i "s|R_DB_PASSWORD|'$DB_USER_PASSWORD'|g" /var/www/wordpress/wp-config.php
-sed -i "s|R_DB_HOST|'$DB_HOST'|g" /var/www/wordpress/wp-config.php
-
-
 if [ ! -f /var/www/wordpress/index.php ] ; then
 
 wp core download    --allow-root --path="/var/www/wordpress"
-
+wp core config	--allow-root \
+				--skip-check \
+				--dbname=$DB_NAME \
+				--dbuser=$DB_USER \
+				--dbpass=$DB_USER_PASSWORD \
+				--dbhost=$DB_HOST \
+				--dbprefix="wp_" \
+				--path="/var/www/wordpress"
 wp core install	--allow-root \
 				--url=$DOMAIN \
 				--title="Inception" \
