@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  nginx_img:
+  nginx:
     build:
       context: ./requirements/nginx
       args:
