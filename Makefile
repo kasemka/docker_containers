@@ -15,8 +15,8 @@ all: 	up
 up:
 	mkdir -p /home/${USER}/data/data/
 	mkdir -p /home/${USER}/data/wp_files/
+	docker-compose -f ./srcs/docker-compose.yml build
 	docker-compose -f srcs/docker-compose.yml up -d
-# -f flag specifies the location of a Compose configuration file
 
 down:
 	docker-compose -f srcs/docker-compose.yml down

@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  nginx:
+  nginx_img:
     build:
       context: ./requirements/nginx
       args:
@@ -16,7 +16,9 @@ services:
       - wp_files:/var/www/wordpress/
     ports:
       - "443:443"
+    image: nginx
     env_file: .env
+
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
@@ -27,7 +29,9 @@ services:
       - docker-network
     volumes:
       - wp_files:/var/www/wordpress/
+    image: wordpress
     env_file: .env
+
   mariadb:
     build:
       context: ./requirements/mariadb
@@ -42,6 +46,7 @@ services:
       - docker-network
     volumes:
       - data:/var/lib/mysql/
+    image: mariadb
 
 volumes:
   data:
